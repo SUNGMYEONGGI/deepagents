@@ -769,9 +769,12 @@ def truncate_if_too_long(result: list[str] | str) -> list[str] | str:
         # Callers render the list with `str()`, so each item costs its repr plus ", ".
         budget = limit - len(repr(TRUNCATION_GUIDANCE)) - 2
         used = 0
-        for kept, item in enumerate(result):
+        kept = 0
+        for item in result:
             used += len(repr(item)) + 2
-            if used > budget:
+            if used <= budget:
+                kept += 1
+            if used > limit:
                 return result[:kept] + [TRUNCATION_GUIDANCE]  # noqa: RUF005  # Concatenation preferred for clarity
         return result
     # string
